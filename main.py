@@ -1,23 +1,23 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command
+from aiogram import Bot, Dispatcher
 from configuration import settings
-import handlers
+from handlers import start, hello, any_text,stickers
 
 
-bot_token = settings.TOKEN
-bot = Bot(token= bot_token)
 
-#asyncio.run( bot.send_message(1156167454, 'hi'))
 
-dp = Dispatcher()
 async def main():
-    from handlers import dp
+
+    bot = Bot(token=settings.TOKEN)
+
+    dp = Dispatcher()
+    #dp.include_router(start.router)
+    #dp.include_router(stickers.router)
+    #dp.include_router(hello.router)
+    #dp.include_router(any_text.router)
+    dp.include_routers(start.router, stickers.router, hello.router, any_text.router)
+
     await dp.start_polling(bot)
-
-
-
-
 
 
 
