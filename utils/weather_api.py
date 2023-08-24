@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-
 from utils.base_api import BaseAPI
 from configuration import settings
 
@@ -24,17 +23,26 @@ class Weather(BaseModel):
 class WeatherAPI(BaseAPI):
     def __init__(self):
         super().__init__(base_link=settings.OPENWEATHER_API_LINK)
+
         self._token = settings.OPENWEATHER_API_TOKEN
 
     async def get_weather_info(self, latitude: float, longitude: float) -> Weather | None:
-        params = {
+        params: dict[str, float | str] = {
             "appid": self._token,
             "lat": latitude,
             "lon": longitude,
             "units": "metric",
             "lang": "ru"
         }
-        answer = await self.get_json(f"https://api.openweathermap.org/data/2.5/weather?lat={params['lat']}&lon={params['lon']}&units={params['units']}&lang={params['lang']}&appid={params['appid']}")
+        async def all_url(params):
+            all_url = ''
+            for i in params:
+                all_url += i+'='+str(params[i])+'&'
+            return all_url[:-1]
+        dop_url = await all_url(params)
+        #answer = await self.get_json(f"https://api.openweathermap.org/data/2.5/weather?lat={params['lat']}&lon={params['lon']}&units={params['units']}&lang={params['lang']}&appid={params['appid']}")
+        answer = await self.get_json(f"/data/2.5/weather?{dop_url}")
+
         print(params)
         print(answer)
         if answer:
