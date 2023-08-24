@@ -1,20 +1,17 @@
 import asyncio
+import logging
 from aiogram import Bot, Dispatcher
 from configuration import settings
-from handlers import start, hello, any_text,stickers, photo
+from handlers import start, hello, any_text,stickers, photo, cat, weather
+from utils.commands import defaunt_commands
 
+logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=settings.TOKEN)
-
+dp = Dispatcher()
+dp.include_routers(start.router,cat.router,weather.router, stickers.router, hello.router, any_text.router, photo.router)
 async def main():
-
-    dp = Dispatcher()
-    #dp.include_router(start.router)
-    #dp.include_router(stickers.router)
-    #dp.include_router(hello.router)
-    #dp.include_router(any_text.router)
-    dp.include_routers(start.router, stickers.router, hello.router, any_text.router, photo.router)
-
+    await defaunt_commands(bot)
     await dp.start_polling(bot)
 
 
